@@ -1,0 +1,72 @@
+.add-item-button {
+    background-color: #4CAF50; 
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.add-item-button:hover {
+    background-color: #45a049;
+}
+
+.add-item-form {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.add-item-form input {
+    margin-bottom: 0.5rem;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 100%;
+}
+
+.add-item-submit,
+.cancel-add-item {
+    background-color: #4CAF50; 
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+    outline: none;
+}
+
+.add-item-submit:hover {
+    background-color: #45a049;
+}
+
+.cancel-add-item {
+    background-color: #f44336;
+}
+
+.cancel-add-item:hover {
+    background-color: #d32f2f; 
+}
+
+.add-item-form form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem; 
+}
+
+.add-item-form button {
+    flex-grow: 1;
+    flex-basis: calc(50% - 0.5rem);
+}

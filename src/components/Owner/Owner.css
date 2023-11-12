@@ -1,0 +1,11 @@
+.owner {
+    margin-top: 1rem;
+    padding: 0.5rem;
+    background-color: #f7f7f7;
+    border-left: 3px solid #2c3e50;
+}
+
+.owner-label {
+    font-weight: 600;
+    margin-right: 0.5rem;
+}

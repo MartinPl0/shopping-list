@@ -1,0 +1,24 @@
+.archived-list-preview {
+    border: 1px solid #ddd;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+    transition: box-shadow 0.3s ease;
+}
+
+.archived-list-preview:hover {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.archived-list-title {
+    margin: 0;
+    color: #333;
+    font-size: 1.2rem;
+}
+
+.archived-list-item-count {
+    margin: 0;
+    color: #666;
+    font-size: 0.9rem;
+}

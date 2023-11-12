@@ -1,0 +1,56 @@
+.shopping-list {
+    background-color: #f7f7f7;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.shopping-list-title {
+    color: #333;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 0.5rem;
+}
+
+.shopping-list-items {
+    list-style: none;
+    padding-left: 0;
+}
+
+.shopping-list-items li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #eee;
+}
+
+.shopping-list-items li.resolved {
+    text-decoration: line-through;
+    color: #6c757d;
+}
+
+.list-actions {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 0.5rem;
+}
+
+.delete-list,
+.archive-list {
+    background-color: #f04e5e;
+    color: white;
+    border: none;
+    padding: 0.375rem 0.75rem;
+    border-radius: 0.25rem;
+    margin-left: 0.5rem;
+    cursor: pointer;
+}
+
+.archive-list {
+    background-color: #ffc107;
+}
+
+.delete-list:hover {
+    background-color: #c82333;
+}
+
+.archive-list:hover {
+    background-color: #e0a800;
+}

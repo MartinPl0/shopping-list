@@ -1,0 +1,14 @@
+.overview-route {
+    margin: 1rem;
+}
+
+.overview-route h1 {
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.overview-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px; /* Adjust the margin as needed */
+}
