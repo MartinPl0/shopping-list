@@ -20,10 +20,10 @@ function MembersSection({ members, isOwner, onRemoveMember, onAddMember, current
                         ) : (
                             member.id === currentUser.id && (
                                 <button
-                                className="leave-list-button"
-                                onClick={() => onRemoveMember(member.id)}
+                                    className="leave-list-button"
+                                    onClick={() => onRemoveMember(member.id)}
                                 >
-                                Leave List
+                                    Leave List
                                 </button>
                             )
                         )}

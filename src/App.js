@@ -15,32 +15,85 @@ function App() {
 
   // Function to handle archiving a list
   const archiveList = (listId) => {
-    setShoppingLists(currentLists => currentLists.filter(list => list.id !== listId));
-    setArchivedLists(currentArchivedLists => [
-      ...currentArchivedLists,
-      shoppingLists.find(list => list.id === listId),
-    ]);
-  };
+    const listToArchive = shoppingLists.find(list => list.id === listId);
+    if (listToArchive) {
+        // Create a copy of the list to archive
+        const archivedList = { ...listToArchive };
+        
+        // Remove the list from shoppingLists
+        setShoppingLists(currentLists => currentLists.filter(list => list.id !== listId));
+        
+        // Add the archived list to archivedLists
+        setArchivedLists(currentArchivedLists => [...currentArchivedLists, archivedList]);
+    }
+};
 
   // Function to handle unarchiving a list
   const unarchiveList = (listId) => {
     setArchivedLists(currentArchivedLists =>
-      currentArchivedLists.filter(list => list.id !== listId)
+        currentArchivedLists.filter(list => list.id !== listId)
     );
     const listToUnarchive = archivedLists.find(list => list.id === listId);
     if (listToUnarchive) {
-      setShoppingLists(currentLists => [...currentLists, listToUnarchive]);
+        // Create a copy of the list to unarchive
+        const unarchivedList = { ...listToUnarchive };
+        
+        // Remove the list from archivedLists
+        setArchivedLists(currentArchivedLists =>
+            currentArchivedLists.filter(list => list.id !== listId)
+        );
+        
+        // Add the unarchived list back to shoppingLists
+        setShoppingLists(currentLists => [...currentLists, unarchivedList]);
     }
+};
+
+  const updateList = (updatedList) => {
+    setShoppingLists(prevLists => prevLists.map(list => 
+        list.id === updatedList.id ? updatedList : list
+    ));
+  };
+
+  const deleteList = (listId) => {
+    setShoppingLists(currentLists => currentLists.filter(list => list.id !== listId));
   };
 
   return (
     <Router>
       <NavbarComponent currentUser={currentUser} />
       <Routes>
-        <Route path="/shopping-list/:id" element={<ListDetailRoute archiveList={archiveList} />} />
-        <Route path="/overview" element={<OverviewRoute shoppingLists={shoppingLists} setShoppingLists={setShoppingLists} archiveList={archiveList} />} />
+        <Route
+          path="/shopping-list/:id"
+          element={
+            <ListDetailRoute
+              shoppingLists={shoppingLists}
+              onArchiveList={archiveList}
+              updateList={updateList}
+              deleteList={deleteList}
+            />
+          }
+        />
+        <Route
+          path="/overview"
+          element={
+            <OverviewRoute
+              shoppingLists={shoppingLists}
+              setShoppingLists={setShoppingLists}
+              archivedLists={archivedLists}
+              currentUser={currentUser}
+            />
+          }
+        />
         <Route path="/" element={<Navigate replace to="/overview" />} />
-        <Route path="/archived" element={<ArchivedRoute archivedLists={archivedLists} unarchiveList={unarchiveList} />} />
+        <Route
+          path="/archived"
+          element={
+            <ArchivedRoute
+              archivedLists={archivedLists}
+              unarchiveList={unarchiveList}
+            />
+          }
+        />
       </Routes>
     </Router>
   );

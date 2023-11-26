@@ -2,22 +2,32 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './ShoppingListsOverview.css';
 
-function ShoppingListsOverview({ shoppingLists }) {
+function ShoppingListsOverview({ shoppingLists, currentUser }) {
     const navigate = useNavigate();
+
+    // Check if currentUser is defined
+    if (!currentUser) {
+        return <div>Loading user data...</div>;
+    }
+
+    // Filter lists to only those where currentUser is a member or the owner
+    const visibleLists = shoppingLists.filter(list =>
+        list.members.some(member => member.id === currentUser.id) || list.owner.id === currentUser.id
+    );
 
     // Navigate to list detail when a list is clicked
     const goToDetail = (listId) => {
         navigate(`/shopping-list/${listId}`);
     };
 
-    // Check if shoppingLists is defined and has length
-    if (!shoppingLists || shoppingLists.length === 0) {
-        return <div>No shopping lists found.</div>;
+    // Check if visibleLists is defined and has length
+    if (!visibleLists || visibleLists.length === 0) {
+        return <div>No shopping lists found or you are not a member of any lists.</div>;
     }
 
     return (
         <div className="shopping-list-overview">
-            {shoppingLists.map((list) => (
+            {visibleLists.map((list) => (
                 <div
                     key={list.id}
                     className="shopping-list-preview"

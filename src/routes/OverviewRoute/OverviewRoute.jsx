@@ -5,17 +5,20 @@ import ShoppingListsOverview from '../../components/ShoppingListsOverview/Shoppi
 import AddListButtonComponent from '../../components/AddListButtonComponent/AddListButtonComponent';
 import ViewArchivedButton from '../../components/ViewArchivedButton/ViewArchivedButton';
 
-function OverviewRoute({ shoppingLists, setShoppingLists, archivedLists }) {
+function OverviewRoute({ shoppingLists, setShoppingLists, archivedLists, currentUser }) {
     const navigate = useNavigate();
 
     // Function to handle the creation of a new list
-    const handleCreateNewList = () => {
-        const newListName = prompt("Enter the name for the new list:");
-        if (newListName) {
-            setShoppingLists(prevLists => [
-                ...prevLists,
-                { id: Date.now().toString(), name: newListName, items: [], members: [] }
-            ]);
+    const handleCreateNewList = (listName) => {
+        if (listName) {
+            const newList = {
+                id: Date.now().toString(),
+                name: listName,
+                items: [],
+                members: [{ }], 
+                owner: { id: currentUser.id, name: currentUser.name } // Set owner property
+            };
+            setShoppingLists(prevLists => [...prevLists, newList]);
         }
     };
 
@@ -27,7 +30,7 @@ function OverviewRoute({ shoppingLists, setShoppingLists, archivedLists }) {
     return (
         <div className="overview-route">
             <h1>Your Shopping Lists</h1>
-            <ShoppingListsOverview shoppingLists={shoppingLists} />
+            <ShoppingListsOverview shoppingLists={shoppingLists} currentUser={currentUser} />
             <div className="overview-actions">
                 <AddListButtonComponent onCreate={handleCreateNewList} />
                 <ViewArchivedButton onClick={handleViewArchivedClick} />

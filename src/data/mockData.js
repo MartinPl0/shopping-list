@@ -79,7 +79,7 @@ export const mockShoppingLists = [
 export const mockArchivedLists = [
     // Add your archived lists here, following the same structure as your mockShoppingLists
     {
-        id: '4',
+        id: '6',
         name: 'Past Grocery List',
         items: [
             { id: '14', name: 'Apples', resolved: true },

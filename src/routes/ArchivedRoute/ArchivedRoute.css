@@ -4,7 +4,35 @@
     min-height: 100vh;
 }
 
+.archived-route h1 {
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
 .archived-route h2 {
     color: #333;
     margin-bottom: 1rem;
+}
+
+.back-to-lists-button {
+    background-color: #555;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    margin: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.2s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.back-to-lists-button:hover {
+    background-color: #666;
+    transform: translateY(-2px);}
+
+.back-to-lists-wrapper {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    justify-content: flex-end;
 }

@@ -1,42 +1,68 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import MembersSection from '../../components/MembersSection/MembersSection';
 import ListItemsDetail from '../../components/ListItemsDetail/ListItemsDetail';
 import AddItemButton from '../../components/AddItemButton/AddItemButton';
 import Owner from '../../components/Owner/Owner';
+import RemoveListButton from '../../components/RemoveListButton/RemoveListButton';
 import './ListDetailRoute.css';
 import { mockShoppingLists } from '../../data/mockData';
 
-function ListDetailRoute() {
+function ListDetailRoute({ shoppingLists, updateList, deleteList, onArchiveList }) {
     const { id } = useParams();
     const navigate = useNavigate(); // Get the navigate function
     const [currentUser] = useState({ id: '1', name: 'Jane Doe' });
-    const initialListData = mockShoppingLists.find((list) => list.id === id);
+    const initialListData = shoppingLists.find((list) => list.id === id);
     const [lists, setLists] = useState(mockShoppingLists);
+    const [isOwner, setIsOwner] = useState(false);
+    const [isMember, setIsMember] = useState(false);
 
     const handleDeleteList = (listId) => {
-        setLists(lists.filter(list => list.id !== listId));
-        navigate('/overview'); // Use navigate to redirect
+        deleteList(listId);
+        navigate('/overview');
     };
 
-    if (!initialListData) {
-        return <p>List not found</p>;
-    }
+    const handleArchiveList = (listId) => {
+        onArchiveList(listId);
+        navigate('/overview');
+    };
 
-    // Check if the current user is the owner of the list
-    const isOwner = currentUser.id === initialListData.owner.id;
+    useEffect(() => {
+        if (!initialListData) {
+            return;
+        }
+
+        // Check if the current user is the owner of the list
+        const ownerCheck = currentUser.id === initialListData.owner.id;
+
+        // Check if the current user is a member of the list
+        const memberCheck = initialListData.members.some((member) => member.id === currentUser.id);
+
+        // Set the isOwner and isMember variables
+        setIsOwner(ownerCheck);
+        setIsMember(ownerCheck || memberCheck);
+
+        if (!memberCheck && !ownerCheck) {
+            // Redirect back to the overview or show a message
+            navigate('/overview');
+        }
+    }, [initialListData, currentUser, navigate]);
 
     return (
         <ListDetailContent
             initialListData={initialListData}
             isOwner={isOwner}
-            onDeleteList={() => handleDeleteList(id)}
+            isMember={isMember || isOwner}
+            onDeleteList={handleDeleteList}
+            onArchiveList={handleArchiveList}
+            navigate={navigate}
             currentUser={currentUser}
+            updateList={updateList}
         />
     );
 }
 
-function ListDetailContent({ initialListData, isOwner, onDeleteList, onArchiveList, currentUser }) {
+const ListDetailContent = ({ initialListData, isOwner, isMember, onDeleteList, onArchiveList, currentUser, updateList, navigate }) => {
     const [shoppingList, setShoppingList] = useState(initialListData);
     const [listMembers, setListMembers] = useState(initialListData.members);
     const [items, setItems] = useState(initialListData.items);
@@ -66,7 +92,9 @@ function ListDetailContent({ initialListData, isOwner, onDeleteList, onArchiveLi
 
     // Save the new list name
     const handleEditSave = () => {
-        setShoppingList({ ...shoppingList, name: editName });
+        const updatedList = { ...shoppingList, name: editName };
+        setShoppingList(updatedList);
+        updateList(updatedList); // Update the list in the App state
         setIsEditing(false);
     };
 
@@ -107,11 +135,27 @@ function ListDetailContent({ initialListData, isOwner, onDeleteList, onArchiveLi
         setListMembers(prevMembers => [...prevMembers, newMember]);
     };
 
-    // Function to remove a member
-    const handleRemoveMember = (memberId) => {
-        // Update the listMembers state
+// Function to remove a member
+const handleRemoveMember = (memberId) => {
+    if (memberId === currentUser.id) {
+        // If the current user is leaving the list, update the initialListData
+        const updatedMembers = initialListData.members.filter(member => member.id !== memberId);
+        const updatedListData = { ...initialListData, members: updatedMembers };
+
+        // Update the list in the App state
+        updateList(updatedListData);
+
+        // Redirect the user to the overview page
+        navigate('/overview');
+    } else {
+        // If it's not the current user (i.e., the owner is removing another member), update the local state
         setListMembers(prevMembers => prevMembers.filter(member => member.id !== memberId));
-    };
+
+        // Update the list data in the parent component or App state if necessary
+        const updatedListData = { ...initialListData, members: listMembers.filter(member => member.id !== memberId) };
+        updateList(updatedListData);
+    }
+};
 
     return (
         <div className="list-detail">
@@ -141,10 +185,8 @@ function ListDetailContent({ initialListData, isOwner, onDeleteList, onArchiveLi
                         </div>
                         {isOwner && (
                             <div className="list-owner-actions">
-                                <button onClick={onDeleteList} className="delete-list-button">
-                                    Delete List
-                                </button>
-                                <button onClick={onArchiveList} className="archive-list-button">
+                                <RemoveListButton onConfirmDelete={() => onDeleteList(initialListData.id)} />
+                                <button onClick={() => onArchiveList(initialListData.id)} className="archive-list-button">
                                     Archive List
                                 </button>
                             </div>
@@ -161,17 +203,18 @@ function ListDetailContent({ initialListData, isOwner, onDeleteList, onArchiveLi
                 <ListItemsDetail
                     key={item.id}
                     item={item}
-                    onItemStatusChange={handleItemStatusChange}
-                    onRemoveItem={handleRemoveItem}
+                    onItemStatusChange={isMember ? handleItemStatusChange : null}
+                    onRemoveItem={isMember ? handleRemoveItem : null}
                 />
             ))}
-            <AddItemButton onAdd={handleAddItem} />
-            <Owner name={initialListData.owner.name} /> {/* Display the owner */}
+            {isMember && <AddItemButton onAdd={handleAddItem} />}
+            <Owner name={initialListData.owner.name} />
             <MembersSection
                 members={listMembers}
                 isOwner={isOwner}
+                isMember={isMember}
                 onRemoveMember={handleRemoveMember}
-                onAddMember={handleAddMember}
+                onAddMember={isOwner ? handleAddMember : null} // Only owners can add members
                 currentUser={currentUser}
             />
         </div>
