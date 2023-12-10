@@ -6,51 +6,55 @@ import AddItemButton from '../../components/AddItemButton/AddItemButton';
 import Owner from '../../components/Owner/Owner';
 import RemoveListButton from '../../components/RemoveListButton/RemoveListButton';
 import './ListDetailRoute.css';
-import { mockShoppingLists } from '../../data/mockData';
-
-function ListDetailRoute({ shoppingLists, updateList, deleteList, onArchiveList }) {
+import * as api from '../../data/api';
+function ListDetailRoute({ updateList, deleteList, onArchiveList }) {
     const { id } = useParams();
-    const navigate = useNavigate(); // Get the navigate function
+    const navigate = useNavigate();
     const [currentUser] = useState({ id: '1', name: 'Jane Doe' });
-    const initialListData = shoppingLists.find((list) => list.id === id);
-    const [lists, setLists] = useState(mockShoppingLists);
+    const [shoppingList, setShoppingList] = useState(null);
     const [isOwner, setIsOwner] = useState(false);
     const [isMember, setIsMember] = useState(false);
+
+    useEffect(() => {
+        const fetchListDetails = async () => {
+            try {
+                const listDetails = await api.getList(id);
+                if (listDetails.isArchived) {
+                    // Redirect to overview if the list is archived
+                    navigate('/overview');
+                    return;
+                }
+                setShoppingList(listDetails);
+                setIsOwner(listDetails.owner.id === currentUser.id);
+                setIsMember(listDetails.members.some(member => member.id === currentUser.id) || listDetails.owner.id === currentUser.id);
+            } catch (error) {
+                console.error("Error fetching list details:", error);
+                navigate('/overview');
+            }
+        };
+
+        if (id) fetchListDetails();
+    }, [id, currentUser.id, navigate]);
 
     const handleDeleteList = (listId) => {
         deleteList(listId);
         navigate('/overview');
     };
 
-    const handleArchiveList = (listId) => {
-        onArchiveList(listId);
-        navigate('/overview');
+    const handleArchiveList = async (listId) => {
+        try {
+            await onArchiveList(listId);
+            navigate('/overview'); // Redirect to overview after archiving
+        } catch (error) {
+            console.error("Error archiving list:", error);
+        }
     };
-
-    useEffect(() => {
-        if (!initialListData) {
-            return;
-        }
-
-        // Check if the current user is the owner of the list
-        const ownerCheck = currentUser.id === initialListData.owner.id;
-
-        // Check if the current user is a member of the list
-        const memberCheck = initialListData.members.some((member) => member.id === currentUser.id);
-
-        // Set the isOwner and isMember variables
-        setIsOwner(ownerCheck);
-        setIsMember(ownerCheck || memberCheck);
-
-        if (!memberCheck && !ownerCheck) {
-            // Redirect back to the overview or show a message
-            navigate('/overview');
-        }
-    }, [initialListData, currentUser, navigate]);
 
     return (
         <ListDetailContent
-            initialListData={initialListData}
+            id={id}
+            shoppingList={shoppingList}
+            setShoppingList={setShoppingList}
             isOwner={isOwner}
             isMember={isMember || isOwner}
             onDeleteList={handleDeleteList}
@@ -62,23 +66,30 @@ function ListDetailRoute({ shoppingLists, updateList, deleteList, onArchiveList 
     );
 }
 
-const ListDetailContent = ({ initialListData, isOwner, isMember, onDeleteList, onArchiveList, currentUser, updateList, navigate }) => {
-    const [shoppingList, setShoppingList] = useState(initialListData);
-    const [listMembers, setListMembers] = useState(initialListData.members);
-    const [items, setItems] = useState(initialListData.items);
+const ListDetailContent = ({ id, shoppingList, setShoppingList, isOwner, isMember, onDeleteList, onArchiveList, currentUser, updateList, navigate }) => {
+    // Initialize state with empty array or empty string if shoppingList is null
+    const [listMembers, setListMembers] = useState(shoppingList?.members || []);
+    const [items, setItems] = useState(shoppingList?.items || []);
     const [isEditing, setIsEditing] = useState(false);
-    const [editName, setEditName] = useState(initialListData.name);
-    const [filter, setFilter] = useState('all'); // 'all', 'resolved', 'unresolved'
+    const [editName, setEditName] = useState(shoppingList?.name || '');
+    const [filter, setFilter] = useState('all');
 
     const showAll = () => setFilter('all');
-    const showResolved = () => setFilter('resolved');
-    const showUnresolved = () => setFilter('unresolved');
+    const showCompleted = () => setFilter('Completed');  // Updated to 'Completed'
+    const showUncompleted = () => setFilter('Uncompleted');
 
     const filteredItems = items.filter(item => {
-        if (filter === 'all') return true;
-        return filter === 'resolved' ? item.resolved : !item.resolved;
+        switch (filter) {
+            case 'all':
+                return true;
+            case 'Completed':  // Updated to 'Completed'
+                return item.isCompleted;  // Check if the item is completed
+            case 'Uncompleted':
+                return !item.isCompleted;  // Check if the item is not completed
+            default:
+                return true;
+        }
     });
-
     // Start editing the list name
     const handleEditStart = () => {
         setIsEditing(true);
@@ -91,72 +102,133 @@ const ListDetailContent = ({ initialListData, isOwner, isMember, onDeleteList, o
     };
 
     // Save the new list name
-    const handleEditSave = () => {
-        const updatedList = { ...shoppingList, name: editName };
-        setShoppingList(updatedList);
-        updateList(updatedList); // Update the list in the App state
-        setIsEditing(false);
+    const handleEditSave = async (event) => {
+        event.preventDefault(); // Prevent the default form submission behavior
+
+        if (!editName.trim()) {
+            return; // Handle empty name scenario
+        }
+
+        try {
+            // API call to update the list
+            const updatedList = await api.updateList(shoppingList.id, editName, shoppingList.description, currentUser.id);
+
+            // Update the local state with the new list details
+            setShoppingList({ ...updatedList });
+            setIsEditing(false);
+        } catch (error) {
+            console.error("Error updating list:", error);
+            // Optionally handle error (e.g., revert optimistic update or show error message)
+        }
     };
 
     // Function to add an item
-    const handleAddItem = (itemName) => {
-        if (!itemName.trim()) return;
-        const newItem = {
-            id: Date.now().toString(), // Simplistic unique ID generation
-            name: itemName,
-            resolved: false,
-        };
-        // Update the items state
-        setItems(prevItems => [...prevItems, newItem]);
+    const handleAddItem = async (itemName) => {
+        try {
+            const newItem = {
+                id: `item-${Date.now()}`,
+                name: itemName,
+                isCompleted: false,
+                quantity: 1
+            };
+            // Optimistically update the UI
+            setItems([...items, newItem]);
+
+            const updatedList = await api.addItemToList(shoppingList.id, itemName, 1);
+            // Update the state with the response from the server
+            setShoppingList(updatedList);
+            setItems(updatedList.items);
+        } catch (error) {
+            console.error("Error adding item:", error);
+            // Optionally revert the optimistic update here
+        }
     };
 
     // Function to remove an item
-    const handleRemoveItem = (itemId) => {
-        // Update the items state
-        setItems(prevItems => prevItems.filter(item => item.id !== itemId));
+    const handleRemoveItem = async (itemId) => {
+        try {
+            const updatedList = await api.removeItemFromList(shoppingList.id, itemId);
+            
+            // Update both the items and the shoppingList states
+            setItems(updatedList.items);
+            setShoppingList(prevList => ({ ...prevList, items: updatedList.items }));
+        } catch (error) {
+            console.error("Error removing item:", error);
+        }
     };
+    
 
     // Function to change the status of an item
-    const handleItemStatusChange = (itemId) => {
-        // Update the items state
-        setItems(prevItems => prevItems.map(item =>
-            item.id === itemId ? { ...item, resolved: !item.resolved } : item
-        ));
+    const handleItemStatusChange = async (itemId) => {
+        try {
+            const { item } = await api.markItemAsCompleted(shoppingList.id, itemId);
+            setItems(prevItems => prevItems.map(i => i.id === itemId ? item : i));
+        } catch (error) {
+            console.error("Error changing item status:", error);
+        }
     };
 
     // Function to add a member
-    const handleAddMember = (memberName) => {
-        if (!memberName.trim()) return;
-        const newMember = {
-            id: Date.now().toString(), // Unique ID for demo purposes
-            name: memberName,
-        };
-        // Update the listMembers state
-        setListMembers(prevMembers => [...prevMembers, newMember]);
+    const handleAddMember = async (userId) => {
+        try {
+            // API call to add the member
+            const updatedList = await api.inviteUserToList(shoppingList.id, userId, currentUser.id);
+
+            // Optimistically update the state with the updated list
+            setShoppingList({ ...updatedList });
+            setListMembers([...updatedList.members]);
+        } catch (error) {
+            console.error("Error inviting user to list:", error);
+            alert(error.message); 
+            // Handle errors appropriately
+        }
     };
 
-// Function to remove a member
-const handleRemoveMember = (memberId) => {
-    if (memberId === currentUser.id) {
-        // If the current user is leaving the list, update the initialListData
-        const updatedMembers = initialListData.members.filter(member => member.id !== memberId);
-        const updatedListData = { ...initialListData, members: updatedMembers };
+    // Function to remove a member
+    const handleRemoveMember = async (memberId) => {
+        try {
+            await api.removeUserFromList(shoppingList.id, memberId);
+            // Update the local state immediately
+            setShoppingList((prevShoppingList) => ({
+                ...prevShoppingList,
+                members: prevShoppingList.members.filter(member => member.id !== memberId)
+            }));
 
-        // Update the list in the App state
-        updateList(updatedListData);
+            // Check if the current user is being removed
+            if (currentUser.id === memberId) {
+                // Redirect the user to /overview
+                navigate('/overview');
+            }
+        } catch (error) {
+            console.error("Error removing user from list:", error);
+        }
+    };
 
-        // Redirect the user to the overview page
-        navigate('/overview');
-    } else {
-        // If it's not the current user (i.e., the owner is removing another member), update the local state
-        setListMembers(prevMembers => prevMembers.filter(member => member.id !== memberId));
+    useEffect(() => {
+        const fetchListItems = async () => {
+            try {
+                const items = await api.viewItemsInList(id);
+                setItems(items);
+            } catch (error) {
+                console.error("Error fetching list items:", error);
+            }
+        };
 
-        // Update the list data in the parent component or App state if necessary
-        const updatedListData = { ...initialListData, members: listMembers.filter(member => member.id !== memberId) };
-        updateList(updatedListData);
+        if (shoppingList) {
+            fetchListItems();
+            setListMembers(shoppingList.members || []);
+        }
+    }, [shoppingList, id]);
+
+    // Render only if shoppingList is not null
+    if (!shoppingList) {
+        return <div>Loading...</div>;
     }
-};
 
+    if (!isMember) {
+        // User is not a member, you can redirect or render a message
+        navigate('/overview');
+    }
     return (
         <div className="list-detail">
             <div className="list-header">
@@ -185,8 +257,8 @@ const handleRemoveMember = (memberId) => {
                         </div>
                         {isOwner && (
                             <div className="list-owner-actions">
-                                <RemoveListButton onConfirmDelete={() => onDeleteList(initialListData.id)} />
-                                <button onClick={() => onArchiveList(initialListData.id)} className="archive-list-button">
+                                <RemoveListButton onConfirmDelete={() => onDeleteList(shoppingList.id)} />
+                                <button onClick={() => onArchiveList(shoppingList.id)} className="archive-list-button">
                                     Archive List
                                 </button>
                             </div>
@@ -196,8 +268,8 @@ const handleRemoveMember = (memberId) => {
             </div>
             <div className="filter-buttons">
                 <button onClick={showAll} disabled={filter === 'all'} className="filter-button">All</button>
-                <button onClick={showResolved} disabled={filter === 'resolved'} className="filter-button">Resolved</button>
-                <button onClick={showUnresolved} disabled={filter === 'unresolved'} className="filter-button">Unresolved</button>
+                <button onClick={showCompleted} disabled={filter === 'Completed'} className="filter-button">Completed</button>
+                <button onClick={showUncompleted} disabled={filter === 'Uncompleted'} className="filter-button">Uncompleted</button>
             </div>
             {filteredItems.map(item => (
                 <ListItemsDetail
@@ -208,7 +280,7 @@ const handleRemoveMember = (memberId) => {
                 />
             ))}
             {isMember && <AddItemButton onAdd={handleAddItem} />}
-            <Owner name={initialListData.owner.name} />
+            <Owner name={shoppingList.owner.name} />
             <MembersSection
                 members={listMembers}
                 isOwner={isOwner}

@@ -1,61 +1,76 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import NavbarComponent from './components/NavbarComponent/NavbarComponent';
 import ListDetailRoute from './routes/ListDetailRoute/ListDetailRoute';
 import OverviewRoute from './routes/OverviewRoute/OverviewRoute';
 import ArchivedRoute from './routes/ArchivedRoute/ArchivedRoute';
-import { mockShoppingLists, mockArchivedLists } from './data/mockData';
+import * as api from './data/api';
 import './App.css';
 
 function App() {
   // Mock current user
   const currentUser = { id: '1', name: 'Jane Doe' };
-  const [shoppingLists, setShoppingLists] = useState(mockShoppingLists);
-  const [archivedLists, setArchivedLists] = useState(mockArchivedLists);
+  const [allLists, setAllLists] = useState([]);
 
-  // Function to handle archiving a list
-  const archiveList = (listId) => {
-    const listToArchive = shoppingLists.find(list => list.id === listId);
-    if (listToArchive) {
-        // Create a copy of the list to archive
-        const archivedList = { ...listToArchive };
-        
-        // Remove the list from shoppingLists
-        setShoppingLists(currentLists => currentLists.filter(list => list.id !== listId));
-        
-        // Add the archived list to archivedLists
-        setArchivedLists(currentArchivedLists => [...currentArchivedLists, archivedList]);
+  const createNewList = async (listName, description) => {
+    try {
+      const newList = await api.createList(listName, description, currentUser.id);
+      setAllLists(prevLists => [...prevLists, newList]);
+    } catch (error) {
+      console.error("Error creating new list:", error);
     }
-};
+  };
+
+  const fetchLists = useCallback(async () => {
+    try {
+      // Fetch non-archived lists
+      const activeLists = await api.viewShoppingLists(currentUser.id, false);
+      // Fetch archived lists
+      const archivedLists = await api.viewShoppingLists(currentUser.id, true);
+      // Combine the results
+      const combinedLists = [...activeLists, ...archivedLists];
+      setAllLists(combinedLists);
+    } catch (error) {
+      console.error("Error fetching lists:", error);
+    }
+  }, [currentUser.id]);
+
+  useEffect(() => {
+    fetchLists();
+  }, [fetchLists])
+  // Function to handle archiving a list
+  const archiveList = async (listId) => {
+    try {
+      const updatedList = await api.archiveList(listId, currentUser.id);
+      setAllLists(allLists.map(list => list.id === updatedList.id ? updatedList : list));
+    } catch (error) {
+      console.error("Error archiving list:", error);
+    }
+  };
 
   // Function to handle unarchiving a list
-  const unarchiveList = (listId) => {
-    setArchivedLists(currentArchivedLists =>
-        currentArchivedLists.filter(list => list.id !== listId)
-    );
-    const listToUnarchive = archivedLists.find(list => list.id === listId);
-    if (listToUnarchive) {
-        // Create a copy of the list to unarchive
-        const unarchivedList = { ...listToUnarchive };
-        
-        // Remove the list from archivedLists
-        setArchivedLists(currentArchivedLists =>
-            currentArchivedLists.filter(list => list.id !== listId)
-        );
-        
-        // Add the unarchived list back to shoppingLists
-        setShoppingLists(currentLists => [...currentLists, unarchivedList]);
+  const unarchiveList = async (listId) => {
+    try {
+      const updatedList = await api.unarchiveList(listId, currentUser.id);
+      setAllLists(allLists.map(list => list.id === updatedList.id ? updatedList : list));
+    } catch (error) {
+      console.error("Error unarchiving list:", error);
     }
-};
+  };
 
   const updateList = (updatedList) => {
-    setShoppingLists(prevLists => prevLists.map(list => 
-        list.id === updatedList.id ? updatedList : list
+    setAllLists(prevLists => prevLists.map(list =>
+      list.id === updatedList.id ? updatedList : list
     ));
   };
 
-  const deleteList = (listId) => {
-    setShoppingLists(currentLists => currentLists.filter(list => list.id !== listId));
+  const deleteList = async (listId) => {
+    try {
+      await api.deleteList(listId);
+      fetchLists();
+    } catch (error) {
+      console.error("Error deleting list:", error);
+    }
   };
 
   return (
@@ -66,7 +81,7 @@ function App() {
           path="/shopping-list/:id"
           element={
             <ListDetailRoute
-              shoppingLists={shoppingLists}
+              allLists={allLists}
               onArchiveList={archiveList}
               updateList={updateList}
               deleteList={deleteList}
@@ -77,9 +92,9 @@ function App() {
           path="/overview"
           element={
             <OverviewRoute
-              shoppingLists={shoppingLists}
-              setShoppingLists={setShoppingLists}
-              archivedLists={archivedLists}
+              allLists={allLists.filter(list => !list.isArchived)}
+              fetchLists={fetchLists}
+              createNewList={createNewList}
               currentUser={currentUser}
             />
           }
@@ -89,7 +104,7 @@ function App() {
           path="/archived"
           element={
             <ArchivedRoute
-              archivedLists={archivedLists}
+              archivedLists={allLists.filter(list => list.isArchived)}
               unarchiveList={unarchiveList}
             />
           }

@@ -1,24 +1,21 @@
-import React from 'react';
+import React, { useEffect }  from 'react';
 import { useNavigate } from 'react-router-dom';
 import './OverviewRoute.css';
 import ShoppingListsOverview from '../../components/ShoppingListsOverview/ShoppingListsOverview';
 import AddListButtonComponent from '../../components/AddListButtonComponent/AddListButtonComponent';
 import ViewArchivedButton from '../../components/ViewArchivedButton/ViewArchivedButton';
 
-function OverviewRoute({ shoppingLists, setShoppingLists, archivedLists, currentUser }) {
+function OverviewRoute({ allLists, fetchLists, createNewList, currentUser }) {
     const navigate = useNavigate();
 
+    useEffect(() => {
+        fetchLists();  // Call the fetchLists function passed from App.js
+    }, [fetchLists, currentUser.id]);
+
     // Function to handle the creation of a new list
-    const handleCreateNewList = (listName) => {
+    const handleCreateNewList = async (listName) => {
         if (listName) {
-            const newList = {
-                id: Date.now().toString(),
-                name: listName,
-                items: [],
-                members: [{ }], 
-                owner: { id: currentUser.id, name: currentUser.name } // Set owner property
-            };
-            setShoppingLists(prevLists => [...prevLists, newList]);
+            await createNewList(listName, "Description"); // Call the function from props
         }
     };
 
@@ -30,7 +27,7 @@ function OverviewRoute({ shoppingLists, setShoppingLists, archivedLists, current
     return (
         <div className="overview-route">
             <h1>Your Shopping Lists</h1>
-            <ShoppingListsOverview shoppingLists={shoppingLists} currentUser={currentUser} />
+            <ShoppingListsOverview shoppingLists={allLists.filter(list => !list.isArchived)} currentUser={currentUser} />
             <div className="overview-actions">
                 <AddListButtonComponent onCreate={handleCreateNewList} />
                 <ViewArchivedButton onClick={handleViewArchivedClick} />

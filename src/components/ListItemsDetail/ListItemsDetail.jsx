@@ -16,10 +16,10 @@ function ListItemDetail({ item, onItemStatusChange, onRemoveItem }) {
         <div className="list-item-detail">
             <input
                 type="checkbox"
-                checked={item.resolved}
+                checked={item.isCompleted}
                 onChange={handleStatusChange}
             />
-            <span className={`item-name ${item.resolved ? 'item-resolved' : ''}`}>
+            <span className={`item-name ${item.isCompleted ? 'item-resolved' : ''}`}>
                 {item.name}
             </span>
             <button onClick={handleRemove} className="remove-item">Remove</button>

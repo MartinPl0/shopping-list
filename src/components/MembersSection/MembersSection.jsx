@@ -10,20 +10,20 @@ function MembersSection({ members, isOwner, onRemoveMember, onAddMember, current
                 {members.map((member) => (
                     <li key={member.id} className="member-item">
                         {member.name}
-                        {isOwner ? (
+                        {member.id === currentUser.id ? (
                             <button
-                                className="remove-member-button"
+                                className="leave-list-button"
                                 onClick={() => onRemoveMember(member.id)}
                             >
-                                Remove
+                                Leave List
                             </button>
                         ) : (
-                            member.id === currentUser.id && (
+                            isOwner && (
                                 <button
-                                    className="leave-list-button"
+                                    className="remove-member-button"
                                     onClick={() => onRemoveMember(member.id)}
                                 >
-                                    Leave List
+                                    Remove
                                 </button>
                             )
                         )}
@@ -36,5 +36,6 @@ function MembersSection({ members, isOwner, onRemoveMember, onAddMember, current
         </div>
     );
 }
+
 
 export default MembersSection;

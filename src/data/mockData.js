@@ -2,12 +2,13 @@ export const mockShoppingLists = [
     {
         id: '1',
         name: 'Grocery List',
+        isArchived: false,
         items: [
-            { id: '1', name: 'Milk', resolved: false },
-            { id: '2', name: 'Bread', resolved: false },
-            { id: '3', name: 'Eggs', resolved: false },
-            { id: '4', name: 'Cheese', resolved: true },
-            { id: '5', name: 'Butter', resolved: false }
+            { id: '1', name: 'Milk', isCompleted: false },
+            { id: '2', name: 'Bread', isCompleted: false },
+            { id: '3', name: 'Eggs', isCompleted: false },
+            { id: '4', name: 'Cheese', isCompleted: true },
+            { id: '5', name: 'Butter', isCompleted: false }
         ],
         members: [
             { id: '2', name: 'Alice Smith' },
@@ -18,11 +19,12 @@ export const mockShoppingLists = [
     {
         id: '2',
         name: 'Hardware Store Run',
+        isArchived: false,
         items: [
-            { id: '6', name: 'Nails', resolved: false },
-            { id: '7', name: 'Hammer', resolved: true },
-            { id: '8', name: 'Ladder', resolved: false },
-            { id: '9', name: 'Drill', resolved: false }
+            { id: '6', name: 'Nails', isCompleted: false },
+            { id: '7', name: 'Hammer', isCompleted: true },
+            { id: '8', name: 'Ladder', isCompleted: false },
+            { id: '9', name: 'Drill', isCompleted: false }
         ],
         members: [
             { id: '4', name: 'Charlie Davis' },
@@ -33,11 +35,12 @@ export const mockShoppingLists = [
     {
         id: '3',
         name: 'Office Supplies',
+        isArchived: false,
         items: [
-            { id: '10', name: 'Stapler', resolved: false },
-            { id: '11', name: 'Markers', resolved: false },
-            { id: '12', name: 'Note Pads', resolved: false },
-            { id: '13', name: 'Paper Clips', resolved: true }
+            { id: '10', name: 'Stapler', isCompleted: false },
+            { id: '11', name: 'Markers', isCompleted: false },
+            { id: '12', name: 'Note Pads', isCompleted: false },
+            { id: '13', name: 'Paper Clips', isCompleted: true }
         ],
         members: [
             { id: '6', name: 'Franklin Green' },
@@ -48,11 +51,12 @@ export const mockShoppingLists = [
     {
         id: '4',
         name: 'Home Improvement',
+        isArchived: false,
         items: [
-            { id: '16', name: 'Paint', resolved: false },
-            { id: '17', name: 'Brushes', resolved: false },
-            { id: '18', name: 'Drop Cloth', resolved: false },
-            { id: '19', name: 'Screws', resolved: true },
+            { id: '16', name: 'Paint', isCompleted: false },
+            { id: '17', name: 'Brushes', isCompleted: false },
+            { id: '18', name: 'Drop Cloth', isCompleted: false },
+            { id: '19', name: 'Screws', isCompleted: true },
         ],
         members: [
             { id: '4', name: 'Charlie Davis' },
@@ -62,35 +66,33 @@ export const mockShoppingLists = [
     {
         id: '5',
         name: 'Electronics Shopping',
+        isArchived: false,
         items: [
-            { id: '20', name: 'Smartphone', resolved: false },
-            { id: '21', name: 'Laptop', resolved: false },
-            { id: '22', name: 'Headphones', resolved: false },
-            { id: '23', name: 'Charging Cables', resolved: false },
+            { id: '20', name: 'Smartphone', isCompleted: false },
+            { id: '21', name: 'Laptop', isCompleted: false },
+            { id: '22', name: 'Headphones', isCompleted: false },
+            { id: '23', name: 'Charging Cables', isCompleted: false },
         ],
         members: [
             { id: '4', name: 'Charlie Davis' },
             { id: '2', name: 'Alice Smith' },
         ],
         owner: { id: '1', name: 'Jane Doe' },
-    }
-];
-
-export const mockArchivedLists = [
-    // Add your archived lists here, following the same structure as your mockShoppingLists
+    },
     {
         id: '6',
         name: 'Past Grocery List',
+        isArchived: true,
         items: [
-            { id: '14', name: 'Apples', resolved: true },
-            { id: '15', name: 'Oranges', resolved: true },
+            { id: '14', name: 'Apples', isCompleted: true },
+            { id: '15', name: 'Oranges', isCompleted: true },
         ],
         members: [
             { id: '2', name: 'Alice Smith' },
             { id: '3', name: 'Bob Johnson' }
         ],
         owner: { id: '1', name: 'Jane Doe' }
-    },
+    }
 ];
 
 export const users = [
@@ -100,5 +102,5 @@ export const users = [
     { id: '4', name: 'Charlie Davis' },
     { id: '5', name: 'Eve Adams' },
     { id: '6', name: 'Franklin Green' },
-    { id: '3', name: 'Grace Hopper' }
+    { id: '7', name: 'Grace Hopper' }
 ];
