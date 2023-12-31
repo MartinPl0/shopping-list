@@ -35,3 +35,130 @@
 .remove-item:hover {
     background-color: #c82333;
 }
+
+/* Light theme styles */
+
+body.light .list-item-detail {
+    background-color: #f9f9f9;
+}
+
+body.light .list-item-detail:hover {
+    background-color: #e9e9e9;
+}
+
+body.light .item-name {
+    color: #333;
+}
+
+body.light .item-resolved {
+    color: #6c757d;
+}
+
+body.light .remove-item {
+    background-color: #9b333d;
+    color: white;
+}
+
+body.light .remove-item:hover {
+    background-color: #c82333;
+}
+
+/* Dark theme styles */
+
+body.dark .list-item-detail {
+    background-color: #555;
+}
+
+body.dark .list-item-detail:hover {
+    background-color: #555;
+}
+
+body.dark .item-name {
+    color: #fff;
+}
+
+body.dark .item-resolved {
+    color: #aaa;
+}
+
+body.dark .remove-item {
+    background-color: #9b333d;
+    color: white;
+}
+
+body.dark .remove-item:hover {
+    background-color: #c82333;
+}
+
+body.dark .filter-button {
+    background-color: #333;
+    color: #fff;
+}
+
+body.dark .filter-button:hover {
+    background-color: #555;
+}
+
+/* Adjust the layout for different screen sizes */
+
+@media (max-width: 900px) {
+    .list-item-detail {
+        flex-direction: column; /* Stack the items vertically */
+        align-items: stretch; /* Stretch the items to fill the width */
+    }
+
+    .item-name {
+        margin-left: 0; /* Remove the left margin */
+        margin-bottom: 0.5rem; /* Add some bottom margin */
+        order: 1; /* Move the item name below the check/uncheck button */
+    }
+
+    .check-item {
+        order: 2; /* Move the check/uncheck button above the item name */
+    }
+
+    .remove-item {
+        width: 100%; /* Make the button full width */
+        order: 3; /* Keep the remove button at the bottom */
+    }
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 600px) {
+    .list-item-detail {
+        padding: 0.75rem; /* Adjust padding for very small screens */
+    }
+
+    .list-item-detail input[type="checkbox"] {
+        width: 24px; /* Increase the width */
+        height: 24px; /* Increase the height */
+    }
+
+    .item-name {
+        font-size: 0.9rem; /* Adjust font size for very small screens */
+    }
+
+    .remove-item {
+        padding: 0.5rem; /* Adjust button padding for very small screens */
+    }
+}
+
+@media (max-width: 360px) {
+    .list-item-detail {
+        padding: 0.75rem; /* Adjust padding for very small screens */
+    }
+
+    .list-item-detail input[type="checkbox"] {
+        width: 24px; /* Increase the width */
+        height: 24px; /* Increase the height */
+    }
+
+    .item-name {
+        font-size: 0.9rem; /* Adjust font size for very small screens */
+    }
+
+    .remove-item {
+        padding: 0.5rem; /* Adjust button padding for very small screens */
+        margin-left: 10px; /* Add some left margin */
+    }
+}

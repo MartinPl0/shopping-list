@@ -1,22 +1,19 @@
 .archived-route {
     padding: 1rem;
-    background-color: #f4f4f4;
     min-height: 100vh;
 }
 
+
+
 .archived-route h1 {
-    color: #333;
     margin-bottom: 0.5rem;
 }
 
 .archived-route h2 {
-    color: #333;
     margin-bottom: 1rem;
 }
 
 .back-to-lists-button {
-    background-color: #555;
-    color: #fff;
     border: none;
     padding: 10px 15px;
     margin: 10px;
@@ -27,12 +24,79 @@
 }
 
 .back-to-lists-button:hover {
-    background-color: #666;
-    transform: translateY(-2px);}
+    transform: translateY(-2px);
+}
 
 .back-to-lists-wrapper {
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
     justify-content: flex-end;
+}
+
+/* Light theme styles */
+
+body.light .archived-route {
+    background-color: #f4f4f4;
+}
+
+body.light .archived-route h1,
+body.light .archived-route h2 {
+    color: #333;
+}
+
+body.light .back-to-lists-button {
+    background-color: #555;
+    color: #fff;
+}
+
+body.light .back-to-lists-button:hover {
+    background-color: #666;
+}
+
+/* Dark theme styles */
+
+body.dark .archived-route {
+    background-color: #333;
+}
+
+body.dark .archived-route h1,
+body.dark .archived-route h2 {
+    color: #fff;
+}
+
+body.dark .back-to-lists-button {
+    background-color: #555;
+    color: #fff;
+}
+
+body.dark .back-to-lists-button:hover {
+    background-color: #666;
+}
+
+/* Adjust the layout for different screen sizes */
+
+@media (max-width: 600px) {
+    .archived-route {
+        padding: 0.5rem;
+    }
+
+    .archived-route h1, .archived-route h2 {
+        font-size: 1.2rem; /* Reduce the font size */
+    }
+
+    .back-to-lists-button {
+        padding: 10px 15px; /* Increase the padding */
+        margin: 5px; /* Reduce the margin */
+        font-size: 16px; /* Increase the font size */
+    }
+
+    .back-to-lists-wrapper {
+        margin-top: 10px; /* Reduce the top margin */
+    }
+
+    .unarchive-button {
+        padding: 10px 15px; /* Increase the padding */
+        font-size: 16px; /* Increase the font size */
+    }
 }

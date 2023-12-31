@@ -7,6 +7,9 @@ import Owner from '../../components/Owner/Owner';
 import RemoveListButton from '../../components/RemoveListButton/RemoveListButton';
 import './ListDetailRoute.css';
 import * as api from '../../data/api';
+import { users as allUsers } from '../../data/mockData';
+import { useTranslation } from 'react-i18next';
+
 function ListDetailRoute({ updateList, deleteList, onArchiveList }) {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -62,6 +65,7 @@ function ListDetailRoute({ updateList, deleteList, onArchiveList }) {
             navigate={navigate}
             currentUser={currentUser}
             updateList={updateList}
+            allUsers={allUsers}
         />
     );
 }
@@ -73,16 +77,17 @@ const ListDetailContent = ({ id, shoppingList, setShoppingList, isOwner, isMembe
     const [isEditing, setIsEditing] = useState(false);
     const [editName, setEditName] = useState(shoppingList?.name || '');
     const [filter, setFilter] = useState('all');
+    const { t } = useTranslation();
 
     const showAll = () => setFilter('all');
-    const showCompleted = () => setFilter('Completed');  // Updated to 'Completed'
+    const showCompleted = () => setFilter('Completed'); 
     const showUncompleted = () => setFilter('Uncompleted');
 
     const filteredItems = items.filter(item => {
         switch (filter) {
             case 'all':
                 return true;
-            case 'Completed':  // Updated to 'Completed'
+            case 'Completed':  
                 return item.isCompleted;  // Check if the item is completed
             case 'Uncompleted':
                 return !item.isCompleted;  // Check if the item is not completed
@@ -148,7 +153,7 @@ const ListDetailContent = ({ id, shoppingList, setShoppingList, isOwner, isMembe
     const handleRemoveItem = async (itemId) => {
         try {
             const updatedList = await api.removeItemFromList(shoppingList.id, itemId);
-            
+
             // Update both the items and the shoppingList states
             setItems(updatedList.items);
             setShoppingList(prevList => ({ ...prevList, items: updatedList.items }));
@@ -156,7 +161,7 @@ const ListDetailContent = ({ id, shoppingList, setShoppingList, isOwner, isMembe
             console.error("Error removing item:", error);
         }
     };
-    
+
 
     // Function to change the status of an item
     const handleItemStatusChange = async (itemId) => {
@@ -173,14 +178,13 @@ const ListDetailContent = ({ id, shoppingList, setShoppingList, isOwner, isMembe
         try {
             // API call to add the member
             const updatedList = await api.inviteUserToList(shoppingList.id, userId, currentUser.id);
-
+    
             // Optimistically update the state with the updated list
             setShoppingList({ ...updatedList });
             setListMembers([...updatedList.members]);
         } catch (error) {
             console.error("Error inviting user to list:", error);
-            alert(error.message); 
-            // Handle errors appropriately
+            alert(error.message); // Handle errors appropriately
         }
     };
 
@@ -242,7 +246,7 @@ const ListDetailContent = ({ id, shoppingList, setShoppingList, isOwner, isMembe
                             autoFocus
                         />
                         <button type="submit" className="save-edit-button">
-                            Save
+                            {t('Save')}
                         </button>
                     </form>
                 ) : (
@@ -251,7 +255,7 @@ const ListDetailContent = ({ id, shoppingList, setShoppingList, isOwner, isMembe
                             <h2 className="list-title">{shoppingList.name}</h2>
                             {isOwner && !isEditing && (
                                 <button onClick={handleEditStart} className="edit-list-button">
-                                    Edit
+                                    {t('Edit')}
                                 </button>
                             )}
                         </div>
@@ -259,7 +263,7 @@ const ListDetailContent = ({ id, shoppingList, setShoppingList, isOwner, isMembe
                             <div className="list-owner-actions">
                                 <RemoveListButton onConfirmDelete={() => onDeleteList(shoppingList.id)} />
                                 <button onClick={() => onArchiveList(shoppingList.id)} className="archive-list-button">
-                                    Archive List
+                                    {t('Archive List')}
                                 </button>
                             </div>
                         )}
@@ -267,9 +271,9 @@ const ListDetailContent = ({ id, shoppingList, setShoppingList, isOwner, isMembe
                 )}
             </div>
             <div className="filter-buttons">
-                <button onClick={showAll} disabled={filter === 'all'} className="filter-button">All</button>
-                <button onClick={showCompleted} disabled={filter === 'Completed'} className="filter-button">Completed</button>
-                <button onClick={showUncompleted} disabled={filter === 'Uncompleted'} className="filter-button">Uncompleted</button>
+                <button onClick={showAll} disabled={filter === 'all'} className="filter-button">{t('all')}</button>
+                <button onClick={showCompleted} disabled={filter === 'Completed'} className="filter-button">{t('Completed')}</button>
+                <button onClick={showUncompleted} disabled={filter === 'Uncompleted'} className="filter-button">{t('Uncompleted')}</button>
             </div>
             {filteredItems.map(item => (
                 <ListItemsDetail
@@ -284,10 +288,10 @@ const ListDetailContent = ({ id, shoppingList, setShoppingList, isOwner, isMembe
             <MembersSection
                 members={listMembers}
                 isOwner={isOwner}
-                isMember={isMember}
                 onRemoveMember={handleRemoveMember}
-                onAddMember={isOwner ? handleAddMember : null} // Only owners can add members
+                onAddMember={handleAddMember}
                 currentUser={currentUser}
+                allUsers={allUsers}
             />
         </div>
     );

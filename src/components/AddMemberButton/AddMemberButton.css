@@ -3,6 +3,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative; /* Relative position */
+    margin-bottom: 16px; /* Margin bottom */
 }
 
 /* Input field */
@@ -33,4 +35,29 @@
 
 .add-member-button:hover {
     background-color: #0056b3; /* Darker shade on hover */
+}
+
+/* Error message styling */
+.error-message {
+    background-color: #ffdddd; /* Light red background */
+    border: 1px solid #f44336; /* Red border */
+    color: #f44336; /* Red text */
+    padding: 10px 20px; /* Some padding */
+    border-radius: 4px; /* Rounded borders */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Slight shadow for depth */
+    position: absolute; /* Absolute position */
+    top: 100%; /* Right below the button */
+    left: 50%; /* Center horizontally */
+    transform: translateX(-50%) translateY(10px); /* Adjust position */
+    z-index: 10; /* Ensure it's above other elements */
+    display: inline-block; /* Inline-block display */
+    margin-top: 10px; /* Margin from the button */
+    max-width: calc(100% - 20px); /* Max width */
+    text-align: center; /* Center text */
+    box-sizing: border-box; /* Box-sizing */
+}
+
+/* Hover effect for error message */
+.error-message:hover {
+    box-shadow: 0px 3px 6px rgba(0,0,0,0.3);
 }

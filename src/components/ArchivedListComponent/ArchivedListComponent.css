@@ -1,5 +1,4 @@
 .archived-list {
-    background-color: #f8f8f8;
     border: 1px solid #e7e7e7;
     padding: 1rem;
     margin-bottom: 1rem;
@@ -7,13 +6,10 @@
 }
 
 .archived-list-title {
-    color: #333;
     margin: 0 0 1rem 0;
 }
 
 .archived-list-button {
-    background-color: #f44336;
-    color: white;
     border: none;
     padding: 8px 16px;
     text-align: center;
@@ -27,4 +23,55 @@
 
 .archived-list-button:hover {
     background-color: #c0392b;
+}
+
+/* Light theme styles */
+
+body.light .archived-list {
+    background-color: #f8f8f8;
+}
+
+body.light .archived-list-title {
+    color: #333;
+}
+
+body.light .archived-list-button {
+    background-color: #f44336;
+    color: white;
+}
+
+/* Dark theme styles */
+
+body.dark .archived-list {
+    background-color: #333;
+}
+
+body.dark .archived-list-title {
+    color: #fff;
+}
+
+body.dark .archived-list-button {
+    background-color: #f44336;
+    color: white;
+}
+
+/* Adjust the layout for different screen sizes */
+
+@media (max-width: 600px) {
+    .archived-route {
+        padding: 0.5rem;
+    }
+
+    .archived-route h1, .archived-route h2 {
+        font-size: 1.2rem; /* Reduce the font size */
+    }
+
+    .back-to-lists-button {
+        padding: 5px 10px; /* Reduce the padding */
+        margin: 5px; /* Reduce the margin */
+    }
+
+    .back-to-lists-wrapper {
+        margin-top: 10px; /* Reduce the top margin */
+    }
 }

@@ -1,7 +1,10 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import './ListItemsDetail.css';
 
 function ListItemDetail({ item, onItemStatusChange, onRemoveItem }) {
+    const { t } = useTranslation();
+
     // Change item status
     const handleStatusChange = () => {
         onItemStatusChange(item.id);
@@ -22,7 +25,7 @@ function ListItemDetail({ item, onItemStatusChange, onRemoveItem }) {
             <span className={`item-name ${item.isCompleted ? 'item-resolved' : ''}`}>
                 {item.name}
             </span>
-            <button onClick={handleRemove} className="remove-item">Remove</button>
+            <button onClick={handleRemove} className="remove-item">{t("Remove")}</button>
         </div>
     );
 }

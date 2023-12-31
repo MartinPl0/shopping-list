@@ -38,3 +38,49 @@
 .remove-member-button:hover {
     background-color: #dc2836;
 }
+
+/* Light theme styles */
+
+body.light .members-section {
+    background-color: #f7f7f7;
+    color: #333;
+}
+
+body.light .member-item {
+    border-bottom: 1px solid #ddd;
+}
+
+body.light .remove-member-button {
+    background-color: #f44336;
+    color: white;
+}
+
+body.light .remove-member-button:hover {
+    background-color: #dc2836;
+}
+
+/* Dark theme styles */
+
+body.dark .members-section {
+    background-color: #333;
+    color: #fff;
+}
+
+body.dark .member-item {
+    border-bottom: 1px solid #555;
+}
+
+body.dark .remove-member-button {
+    background-color: #f44336;
+    color: white;
+}
+
+body.dark .remove-member-button:hover {
+    background-color: #dc2836;
+}
+
+@media (max-width: 600px) {
+    .remove-member-button {
+        padding: 5px 40px; /* Increase the horizontal padding */
+    }
+}

@@ -1,5 +1,6 @@
 import React, { useEffect }  from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import './OverviewRoute.css';
 import ShoppingListsOverview from '../../components/ShoppingListsOverview/ShoppingListsOverview';
 import AddListButtonComponent from '../../components/AddListButtonComponent/AddListButtonComponent';
@@ -7,6 +8,7 @@ import ViewArchivedButton from '../../components/ViewArchivedButton/ViewArchived
 
 function OverviewRoute({ allLists, fetchLists, createNewList, currentUser }) {
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     useEffect(() => {
         fetchLists();  // Call the fetchLists function passed from App.js
@@ -15,7 +17,7 @@ function OverviewRoute({ allLists, fetchLists, createNewList, currentUser }) {
     // Function to handle the creation of a new list
     const handleCreateNewList = async (listName) => {
         if (listName) {
-            await createNewList(listName, "Description"); // Call the function from props
+            await createNewList(listName, t("Description")); // Call the function from props
         }
     };
 
@@ -26,7 +28,7 @@ function OverviewRoute({ allLists, fetchLists, createNewList, currentUser }) {
 
     return (
         <div className="overview-route">
-            <h1>Your Shopping Lists</h1>
+            <h1>{t("Your Shopping Lists")}</h1>
             <ShoppingListsOverview shoppingLists={allLists.filter(list => !list.isArchived)} currentUser={currentUser} />
             <div className="overview-actions">
                 <AddListButtonComponent onCreate={handleCreateNewList} />

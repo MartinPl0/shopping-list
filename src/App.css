@@ -1,5 +1,8 @@
 .App {
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .App-logo {
@@ -28,11 +31,31 @@
   color: #61dafb;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+body.light {
+  background-color: #fff;
+  color: #333;
+}
+
+body.dark {
+  background-color: #333;
+  color: #fff;
+}
+
+/* Add media queries for responsiveness */
+@media (max-width: 600px) {
+  .App-header {
+    flex-direction: column;
   }
-  to {
-    transform: rotate(360deg);
+}
+
+@media (min-width: 601px) and (max-width: 1024px) {
+  .App-header {
+    flex-direction: row;
+  }
+}
+
+@media (min-width: 1025px) {
+  .App-header {
+    flex-direction: row;
   }
 }

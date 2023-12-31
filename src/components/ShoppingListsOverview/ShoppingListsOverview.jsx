@@ -1,13 +1,15 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import './ShoppingListsOverview.css';
 
 function ShoppingListsOverview({ shoppingLists, currentUser }) {
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     // Check if currentUser is defined
     if (!currentUser) {
-        return <div>Loading user data...</div>;
+        return <div>{t("Loading user data...")}</div>;
     }
 
     // Filter lists to only those where currentUser is a member or the owner
@@ -22,7 +24,7 @@ function ShoppingListsOverview({ shoppingLists, currentUser }) {
 
     // Check if visibleLists is defined and has length
     if (!visibleLists || visibleLists.length === 0) {
-        return <div>No shopping lists found or you are not a member of any lists.</div>;
+        return <div>{t("No shopping lists found or you are not a member of any lists.")}</div>;
     }
 
     return (

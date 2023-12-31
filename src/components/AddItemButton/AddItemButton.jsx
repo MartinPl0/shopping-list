@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import './AddItemButton.css';
 
 function AddItemForm({ onAdd }) {
+    const { t } = useTranslation();
     const [itemName, setItemName] = useState('');
     const [showForm, setShowForm] = useState(false);
 
@@ -18,21 +20,21 @@ function AddItemForm({ onAdd }) {
                 <form onSubmit={handleSubmit}>
                     <input
                         type="text"
-                        placeholder="Enter item name"
+                        placeholder={t("Enter item name")}
                         value={itemName}
                         onChange={(e) => setItemName(e.target.value)}
                         required
                     />
                     <button type="submit" className="add-item-submit">
-                        Submit
+                        {t("Submit")}
                     </button>
                     <button type="button" onClick={() => setShowForm(false)} className="cancel-add-item">
-                        Cancel
+                        {t("Cancel")}
                     </button>
                 </form>
             ) : (
                 <button onClick={() => setShowForm(true)} className="add-item-button">
-                    Add Item
+                    {t("Add Item")}
                 </button>
             )}
         </div>

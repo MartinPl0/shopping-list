@@ -1,17 +1,141 @@
 .navbar {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between; /* This will space out the navbar-left, navbar-center, and navbar-right */
     align-items: center;
     background-color: #333;
     color: white;
     padding: 0.5rem 1rem;
 }
 
+.navbar-left {
+    /* Give the navbar-left enough space but not too much */
+    flex: 0 1 auto;
+}
+
+.navbar-center {
+    /* Allow the center to grow and shrink as needed */
+    flex: 1;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    text-align: center;
+}
+
+.navbar-right {
+    /* Allow the navbar-right to take up the available space on the right */
+    flex: 0 1 auto;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end; /* This will push the language and theme to the far right */
+}
+
 .navbar-brand {
-    color: white; 
-    text-decoration: none; 
+    color: white;
+    text-decoration: none;
 }
 
 .navbar-user {
     font-style: italic;
+}
+
+.navbar-theme-toggle {
+    background-color: #444;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.navbar-theme-toggle:hover {
+    background-color: #555;
+}
+
+.navbar-language {
+    background-color: #444; /* Set the dropdown background color */
+    color: white; /* Set the text color */
+    border: 1px solid white; /* Keep the border visible */
+    padding: 0.5rem;
+    font-size: 1rem;
+    min-width: 100px;
+    margin-left: 1rem;
+    cursor: pointer;
+    appearance: none; /* Disable native OS UI styles */
+    -webkit-appearance: none; /* Disable native OS UI styles for Safari */
+    -moz-appearance: none; /* Disable native OS UI styles for Firefox */
+}
+
+/* For the option tags inside the select */
+.navbar-language option {
+    background-color: #333; /* Set a different background color for options */
+    color: white; /* Ensure text is visible */
+}
+
+/* Add custom styles for when the dropdown is focused or active */
+.navbar-language:focus, .navbar-language:active {
+    outline: none; /* Remove default focus outline */
+    border-color: #555; /* Optional: Change border color when focused */
+}
+
+
+/* You can add a pseudo-element for the arrow if you prefer */
+.navbar-language::after {
+    content: '▼'; /* Add a down arrow */
+    position: absolute;
+    right: 1rem;
+    pointer-events: none; /* Make sure clicks on the arrow still open the dropdown */
+}
+
+/* Adjust the layout for different screen sizes */
+@media (max-width: 900px) {
+    .navbar-left, .navbar-center, .navbar-right {
+        flex-direction: column; /* Stack the items vertically */
+        align-items: center; /* Center align items */
+    }
+
+    .navbar-brand, .navbar-user, .navbar-theme-toggle, .navbar-language {
+        width: 100%; /* Full width */
+        margin-bottom: 0.5rem; /* Add some bottom margin between the items */
+    }
+
+    .navbar-theme-toggle {
+        margin-left: 0; /* Reset the margin */
+    }
+
+    .navbar-right {
+        order: 3; /* Ensure the right part of the navbar is at the bottom on smaller screens */
+    }
+}
+
+@media (max-width: 600px) {
+    .navbar {
+        flex-direction: row;
+    }
+
+    .navbar-left {
+        flex-direction: column;
+    }
+
+    .navbar-left .navbar-brand {
+        order: 1;
+    }
+
+    .navbar-left .navbar-user {
+        order: 2;
+    }
+
+    .navbar-right {
+        flex-direction: row;
+    }
+
+    .navbar-right .navbar-theme-toggle, 
+    .navbar-right .navbar-language {
+        order: 1;
+    }
+
+    .navbar-user, .navbar-theme-toggle, .navbar-language {
+        font-size: 0.9rem; /* Reduce the font size */
+    }
 }

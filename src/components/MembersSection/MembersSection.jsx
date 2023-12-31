@@ -1,11 +1,14 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import './MembersSection.css';
 import AddMemberButton from '../AddMemberButton/AddMemberButton';
 
-function MembersSection({ members, isOwner, onRemoveMember, onAddMember, currentUser }) {
+function MembersSection({ members, isOwner, onRemoveMember, onAddMember, currentUser, allUsers }) {
+    const { t } = useTranslation();
+
     return (
         <div className="members-section">
-            <h3>Members</h3>
+            <h3>{t("Members")}</h3>
             <ul className="members-list">
                 {members.map((member) => (
                     <li key={member.id} className="member-item">
@@ -15,7 +18,7 @@ function MembersSection({ members, isOwner, onRemoveMember, onAddMember, current
                                 className="leave-list-button"
                                 onClick={() => onRemoveMember(member.id)}
                             >
-                                Leave List
+                                {t("Leave List")}
                             </button>
                         ) : (
                             isOwner && (
@@ -23,19 +26,18 @@ function MembersSection({ members, isOwner, onRemoveMember, onAddMember, current
                                     className="remove-member-button"
                                     onClick={() => onRemoveMember(member.id)}
                                 >
-                                    Remove
+                                    {t("Remove")}
                                 </button>
                             )
                         )}
                     </li>
                 ))}
                 {isOwner && (
-                    <AddMemberButton onAdd={onAddMember} />
+                <AddMemberButton onAdd={onAddMember} allUsers={allUsers} />
                 )}
             </ul>
         </div>
     );
 }
-
 
 export default MembersSection;

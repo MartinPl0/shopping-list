@@ -1,6 +1,37 @@
 .owner {
     margin-top: 1rem;
     padding: 0.5rem;
+    border-left: 3px solid #2c3e50;
+}
+
+.owner-label {
+    font-weight: 600;
+    margin-right: 0.5rem;
+}
+
+/* Light theme styles */
+
+body.light .owner {
+    background-color: #f7f7f7;
+    color: #333;
+}
+
+body.light .owner-label {
+    color: #333;
+}
+
+/* Dark theme styles */
+
+body.dark .owner {
+    background-color: #333;
+    color: #fff;
+}
+
+body.dark .owner-label {
+    color: #fff;
+}.owner {
+    margin-top: 1rem;
+    padding: 0.5rem;
     background-color: #f7f7f7;
     border-left: 3px solid #2c3e50;
 }

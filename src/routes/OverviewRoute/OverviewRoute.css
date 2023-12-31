@@ -2,13 +2,55 @@
     margin: 1rem;
 }
 
-.overview-route h1 {
+body.light .overview-route h1 {
     color: #333;
+}
+
+body.dark .overview-route h1 {
+    color: #fff;
+}
+
+.overview-route h1 {
     margin-bottom: 0.5rem;
 }
 
 .overview-actions {
     display: flex;
+    flex-wrap: wrap; /* Allow the items to wrap onto multiple lines */
     justify-content: space-between;
     margin-top: 20px; /* Adjust the margin as needed */
+}
+
+.overview-actions .list {
+    flex: 1 0 20%; /* Default to 4 items per row */
+    margin: 1rem;
+}
+
+body.light .overview-actions {
+    background-color: #fff;
+    color: #333;
+}
+
+body.dark .overview-actions {
+    background-color: #333;
+    color: #fff;
+}
+
+
+@media (max-width: 1200px) {
+    .overview-actions .list {
+        flex: 1 0 25%; /* 3 items per row */
+    }
+}
+
+@media (max-width: 900px) {
+    .overview-actions .list {
+        flex: 1 0 33%; /* 2 items per row */
+    }
+}
+
+@media (max-width: 600px) {
+    .overview-actions .list {
+        flex: 1 0 50%; /* 1 item per row */
+    }
 }
