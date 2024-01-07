@@ -35,5 +35,8 @@
     "Unarchive": "Obnovit",
     "Welcome": "Vítejte",
     "English": "Angličtina",
-    "Czech": "Čeština"
+    "Czech": "Čeština",
+    "item_0": "položka",
+    "item_1": "položky",
+    "item_2": "položek"
 }

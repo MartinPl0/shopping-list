@@ -9,7 +9,23 @@ import './ListDetailRoute.css';
 import * as api from '../../data/api';
 import { users as allUsers } from '../../data/mockData';
 import { useTranslation } from 'react-i18next';
+import { Pie } from 'react-chartjs-2';
+import {
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    ArcElement,
+    Tooltip,
+    Legend,
+} from 'chart.js';
 
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    ArcElement,
+    Tooltip,
+    Legend
+);
 function ListDetailRoute({ updateList, deleteList, onArchiveList }) {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -80,14 +96,14 @@ const ListDetailContent = ({ id, shoppingList, setShoppingList, isOwner, isMembe
     const { t } = useTranslation();
 
     const showAll = () => setFilter('all');
-    const showCompleted = () => setFilter('Completed'); 
+    const showCompleted = () => setFilter('Completed');
     const showUncompleted = () => setFilter('Uncompleted');
 
     const filteredItems = items.filter(item => {
         switch (filter) {
             case 'all':
                 return true;
-            case 'Completed':  
+            case 'Completed':
                 return item.isCompleted;  // Check if the item is completed
             case 'Uncompleted':
                 return !item.isCompleted;  // Check if the item is not completed
@@ -95,6 +111,29 @@ const ListDetailContent = ({ id, shoppingList, setShoppingList, isOwner, isMembe
                 return true;
         }
     });
+
+    const pieChartData = {
+        labels: [t('Completed'), t('Uncompleted')],
+        datasets: [
+            {
+                label: '# of Votes',
+                data: [
+                    items.filter(item => item.isCompleted).length, // Completed items count
+                    items.filter(item => !item.isCompleted).length, // Uncompleted items count
+                ],
+                backgroundColor: [
+                    'rgba(54, 162, 235, 0.6)',
+                    'rgba(255, 99, 132, 0.6)'
+                ],
+                borderColor: [
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 99, 132, 1)'
+                ],
+                borderWidth: 1,
+            },
+        ],
+    };
+
     // Start editing the list name
     const handleEditStart = () => {
         setIsEditing(true);
@@ -178,7 +217,7 @@ const ListDetailContent = ({ id, shoppingList, setShoppingList, isOwner, isMembe
         try {
             // API call to add the member
             const updatedList = await api.inviteUserToList(shoppingList.id, userId, currentUser.id);
-    
+
             // Optimistically update the state with the updated list
             setShoppingList({ ...updatedList });
             setListMembers([...updatedList.members]);
@@ -274,6 +313,9 @@ const ListDetailContent = ({ id, shoppingList, setShoppingList, isOwner, isMembe
                 <button onClick={showAll} disabled={filter === 'all'} className="filter-button">{t('all')}</button>
                 <button onClick={showCompleted} disabled={filter === 'Completed'} className="filter-button">{t('Completed')}</button>
                 <button onClick={showUncompleted} disabled={filter === 'Uncompleted'} className="filter-button">{t('Uncompleted')}</button>
+            </div>
+            <div className="pie-chart-container">
+                <Pie data={pieChartData} />
             </div>
             {filteredItems.map(item => (
                 <ListItemsDetail

@@ -27,6 +27,16 @@ function ShoppingListsOverview({ shoppingLists, currentUser }) {
         return <div>{t("No shopping lists found or you are not a member of any lists.")}</div>;
     }
 
+    function getPluralKey(count) {
+        if (count === 1) {
+            return "item_0"; // Singular
+        } else if (count >= 2 && count <= 4) {
+            return "item_1"; // 2-4 items
+        } else {
+            return "item_2"; // 5 and more items
+        }
+    }
+
     return (
         <div className="shopping-list-overview">
             {visibleLists.map((list) => (
@@ -36,14 +46,16 @@ function ShoppingListsOverview({ shoppingLists, currentUser }) {
                     onClick={() => goToDetail(list.id)}
                 >
                     <h3 className="list-name">{list.name}</h3>
+                    <div className="item-count">
+                        {list.itemCount} {t(getPluralKey(list.itemCount))}
+                    </div>
                     <ul className="item-preview">
-                        {list.items.slice(0, 3).map((item) => (
+                        {list.items.slice(0, 5).map((item) => (
                             <li key={item.id} className="item-name">
                                 {item.name}
                             </li>
                         ))}
                     </ul>
-                    {/* Add more details if needed */}
                 </div>
             ))}
         </div>

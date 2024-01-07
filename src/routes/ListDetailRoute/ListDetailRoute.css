@@ -266,6 +266,12 @@ body.dark .archive-list-button:hover {
     border-color: #fff; /* Keep the border color on hover */
 }
 
+.pie-chart-container {
+    width: 50%; /* Adjust the size as needed */
+    margin: auto;
+    margin-bottom: 20px; /* Add space below the pie chart */
+}
+
 @media (max-width: 900px) {
     .list-detail {
         padding: 0.5rem;

@@ -138,7 +138,10 @@ function App() {
             path="/overview"
             element={
               <OverviewRoute
-                allLists={allLists.filter(list => !list.isArchived)}
+                allLists={allLists.filter(list => !list.isArchived).map(list => ({
+                  ...list,
+                  itemCount: list.items ? list.items.length : 0
+                }))}
                 fetchLists={fetchLists}
                 createNewList={createNewList}
                 currentUser={currentUser}

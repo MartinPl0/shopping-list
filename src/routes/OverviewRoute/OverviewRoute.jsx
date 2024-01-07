@@ -1,4 +1,4 @@
-import React, { useEffect }  from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import './OverviewRoute.css';
@@ -29,7 +29,13 @@ function OverviewRoute({ allLists, fetchLists, createNewList, currentUser }) {
     return (
         <div className="overview-route">
             <h1>{t("Your Shopping Lists")}</h1>
-            <ShoppingListsOverview shoppingLists={allLists.filter(list => !list.isArchived)} currentUser={currentUser} />
+            <ShoppingListsOverview
+                shoppingLists={allLists ? allLists.filter(list => !list.isArchived).map(list => ({
+                    ...list,
+                    itemCount: list.items ? list.items.length : 0
+                })) : []}
+                currentUser={currentUser}
+            />
             <div className="overview-actions">
                 <AddListButtonComponent onCreate={handleCreateNewList} />
                 <ViewArchivedButton onClick={handleViewArchivedClick} />
